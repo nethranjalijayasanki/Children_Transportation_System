@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mechanic Management</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: url('https://images.unsplash.com/photo-1516575525126-7814ccaddd4e') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .sidebar {
+      height: 100vh;
+      width: 240px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background-color: rgba(0, 0, 0, 0.8);
+      padding-top: 60px;
+    }
+
+    .sidebar a {
+      padding: 12px;
+      text-decoration: none;
+      font-size: 18px;
+      color: #f1f1f1;
+      display: block;
+    }
+
+    .sidebar a:hover {
+      background-color: #575757;
+    }
+
+    .content {
+      margin-left: 260px;
+      padding: 20px;
+      background-color: rgba(255, 255, 255, 0.95);
+      min-height: 100vh;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navigation Bar -->
+<nav class="navbar navbar-dark bg-dark fixed-top">
+  <div class="container-fluid">
+    <span class="navbar-brand mb-0 h1">Children Transportation System</span>
+  </div>
+</nav>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <a href="passenger.html">Passengers</a>
+  <a href="vehicle.html">Vehicles</a>
+  <a href="route.html">Route Details</a>
+  <a href="payment.html">Payments</a>
+  <a href="mechanic.html" class="active">Mechanics</a>
+</div>
+
+<!-- Content -->
+<div class="content">
+  <div class="container">
+    <br>
+    <br>
+    <br>
+    <h2 class="mb-4">Mechanic Management</h2>
+
+    <!-- Form -->
+    <form id="mechanic-form" class="row g-3">
+      <input type="hidden" id="mechanicId">
+      <div class="col-md-4">
+        <input type="text" class="form-control" id="name" placeholder="Name" required>
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" id="phone" placeholder="Phone" required>
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" id="specialization" placeholder="Specialization" required>
+      </div>
+      <div class="col-md-4 d-grid gap-2">
+        <button type="button" class="btn btn-primary" onclick="createMechanic()">Save</button>
+        <button type="button" class="btn btn-success" onclick="updateMechanic()">Update</button>
+      </div>
+    </form>
+
+    <!-- Table -->
+    <table class="table table-bordered table-striped mt-4">
+      <thead class="table-dark">
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Phone</th>
+        <th>Specialization</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody id="mechanic-table-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+  const apiUrl = "http://localhost:8080/api/v1/mechanics";
+
+  async function fetchMechanics() {
+    const res = await fetch(`${apiUrl}/getAll`);
+    const data = await res.json();
+    const tbody = document.getElementById("mechanic-table-body");
+    tbody.innerHTML = "";
+
+    data.forEach(mechanic => {
+      tbody.innerHTML += `
+                <tr>
+                    <td>${mechanic.id}</td>
+                    <td>${mechanic.name}</td>
+                    <td>${mechanic.phone}</td>
+                    <td>${mechanic.specialization}</td>
+                    <td>
+                        <button class="btn btn-sm btn-warning" onclick="editMechanic(${mechanic.id})">Edit</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteMechanic(${mechanic.id})">Delete</button>
+                    </td>
+                </tr>`;
+    });
+  }
+
+  async function createMechanic() {
+    const mechanic = {
+      name: document.getElementById("name").value,
+      phone: document.getElementById("phone").value,
+      specialization: document.getElementById("specialization").value
+    };
+
+    await fetch(`${apiUrl}/save`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(mechanic)
+    });
+
+    document.getElementById("mechanic-form").reset();
+    fetchMechanics();
+  }
+
+  async function editMechanic(id) {
+    const res = await fetch(`${apiUrl}/search/${id}`);
+    const mechanic = await res.json();
+
+    document.getElementById("mechanicId").value = mechanic.id;
+    document.getElementById("name").value = mechanic.name;
+    document.getElementById("phone").value = mechanic.phone;
+    document.getElementById("specialization").value = mechanic.specialization;
+  }
+
+  async function updateMechanic() {
+    const id = document.getElementById("mechanicId").value;
+    const mechanic = {
+      name: document.getElementById("name").value,
+      phone: document.getElementById("phone").value,
+      specialization: document.getElementById("specialization").value
+    };
+
+    await fetch(`${apiUrl}/update/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(mechanic)
+    });
+
+    document.getElementById("mechanic-form").reset();
+    fetchMechanics();
+  }
+
+  async function deleteMechanic(id) {
+    await fetch(`${apiUrl}/delete/${id}`, { method: "DELETE" });
+    fetchMechanics();
+  }
+
+  window.onload = fetchMechanics;
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

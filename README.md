@@ -34,6 +34,8 @@ A web-based application for managing transportation services for children, inclu
 **Database:**
 - MySQL (or preferred relational database) 🗄️
 
+
+
 ---
 
 ## Getting Started 🚀
@@ -48,6 +50,21 @@ Follow these steps to set up the project locally:
 git clone https://github.com/yourusername/children-transportation-system.git
 cd children-transportation-system
 
+mvn clean install
+mvn spring-boot:run
+---
+```
+
+### 2. YouTube video:
+
+```bash
+
+---
+
+https://youtu.be/DtU0kn999UU?feature=shared
+---
+```
+
 ## 3. Frontend 🌟:
 The frontend files are located in the src/main/resources/static directory. You can open the HTML files directly in your browser or deploy them using a web server. 🌍
 
@@ -56,117 +73,118 @@ The frontend files are located in the src/main/resources/static directory. You c
 The application exposes the following REST API endpoints:
 
 1. Passenger API 🧑‍🦱
-POST /api/passengers: Add a new passenger 📝
+   POST /api/passengers: Add a new passenger 📝
 
-GET /api/passengers: Get all passengers 👥
+- GET /api/passengers: Get all passengers 👥
 
-GET /api/passengers/{id}: Get a passenger by ID 🔍
+- GET /api/passengers/{id}: Get a passenger by ID 🔍
 
-PUT /api/passengers/{id}: Update a passenger ✏️
+- PUT /api/passengers/{id}: Update a passenger ✏️
 
-DELETE /api/passengers/{id}: Delete a passenger 🗑️
+- DELETE /api/passengers/{id}: Delete a passenger 🗑️
 
 2. Vehicle API 🚗
-POST /api/vehicles: Add a new vehicle 🚙
+   POST /api/vehicles: Add a new vehicle 🚙
 
-GET /api/vehicles: Get all vehicles 🚘
+- GET /api/vehicles: Get all vehicles 🚘
 
-GET /api/vehicles/{id}: Get a vehicle by ID 🔎
+- GET /api/vehicles/{id}: Get a vehicle by ID 🔎
 
-PUT /api/vehicles/{id}: Update a vehicle 🛠️
+- PUT /api/vehicles/{id}: Update a vehicle 🛠️
 
-DELETE /api/vehicles/{id}: Delete a vehicle ❌
+- DELETE /api/vehicles/{id}: Delete a vehicle ❌
 
 3. Route API 🛣️
-POST /api/routes: Add a new route 🛤️
+   POST /api/routes: Add a new route 🛤️
 
-GET /api/routes: Get all routes 🗺️
+- GET /api/routes: Get all routes 🗺️
 
-GET /api/routes/{id}: Get a route by ID 🔍
+- GET /api/routes/{id}: Get a route by ID 🔍
 
-PUT /api/routes/{id}: Update a route ✏️
+- PUT /api/routes/{id}: Update a route ✏️
 
-DELETE /api/routes/{id}: Delete a route 🗑️
+- DELETE /api/routes/{id}: Delete a route 🗑️
 
 4. Payment API 💳
-POST /api/payments: Add a new payment 💸
+   POST /api/payments: Add a new payment 💸
 
-GET /api/payments: Get all payments 💰
+- GET /api/payments: Get all payments 💰
 
-GET /api/payments/{id}: Get a payment by ID 🔍
+- GET /api/payments/{id}: Get a payment by ID 🔍
 
-PUT /api/payments/{id}: Update a payment ✏️
+- PUT /api/payments/{id}: Update a payment ✏️
 
-DELETE /api/payments/{id}: Delete a payment 🗑️
+- DELETE /api/payments/{id}: Delete a payment 🗑️
 
 5. Mechanic API 🔧
-POST /api/mechanics: Add a new mechanic 🛠️
+   POST /api/mechanics: Add a new mechanic 🛠️
 
-GET /api/mechanics: Get all mechanics 🔍
+- GET /api/mechanics: Get all mechanics 🔍
 
-GET /api/mechanics/{id}: Get a mechanic by ID 👨‍🔧
+- GET /api/mechanics/{id}: Get a mechanic by ID 👨‍🔧
 
-PUT /api/mechanics/{id}: Update a mechanic ✏️
+- PUT /api/mechanics/{id}: Update a mechanic ✏️
 
-DELETE /api/mechanics/{id}: Delete a mechanic 🗑️
+- DELETE /api/mechanics/{id}: Delete a mechanic 🗑️
 
-Testing with Postman 🧪
+**Testing with Postman 🧪:**
 You can use the provided Postman Collection to test the API endpoints. Import the collection into Postman and run the requests to interact with the system. 🚀
 
-Example Database Schema 📊
+**Example Database Schema 📊:**
 Here’s a simple example of the database schema:
 
-Passenger 🧑‍🦱
+### Passenger 🧑‍🦱
 
-Field	Type
-id	Long
-name	String
-age	Integer
-school	String
-pickupLocation	String
-Vehicle 🚗
+- Field	Type
+- id	Long
+- name	String
+- age	Integer
+- school	String
+- pickupLocation	String
 
-Field	Type
-id	Long
-plateNumber	String
-type	String
-capacity	Integer
-driverName	String
-Route 🛣️
+### Vehicle 🚗
 
-Field	Type
-id	Long
-routeName	String
-startingPoint	String
-destination	String
-Payment 💳
+- Field	Type
+- id	Long
+- plateNumber	String
+- type	String
+- capacity	Integer
+- driverName	String
 
-Field	Type
-id	Long
-amount	Double
-paymentDate	String
-passengerId	Long
-Mechanic 🔧
+### Route 🛣️
 
-Field	Type
-id	Long
-name	String
-contactNumber	String
-serviceType	String
-Contributing 🤝
+- Field	Type
+- id	Long
+- routeName	String
+- startingPoint	String
+- destination	String
+
+### Payment 💳
+
+- Field	Type
+- id	Long
+- amount	Double
+- paymentDate	String
+- passengerId	Long
+
+### Mechanic 🔧
+
+- Field	Type
+- id	Long
+- name	String
+- contactNumber	String
+- serviceType	String
+## Contributing 🤝
 Feel free to fork this project, create a new branch, and submit a pull request. Contributions are welcome! 🌟
 
-License 📜
+## License 📜
 This project is licensed under the MIT License.
 
-Acknowledgments 🙏
-Bootstrap for the UI framework.
+## Acknowledgments 🙏
+- Bootstrap for the UI framework.
 
-Spring Boot for the backend framework.
+- Spring Boot for the backend framework.
 
-MySQL for the database.
+- MySQL for the database.
 
-markdown
-Copy
-Edit
 

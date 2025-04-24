@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Payment Management</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: url('https://images.unsplash.com/photo-1573164574396-9d7d0a1a59f5') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .sidebar {
+      height: 100vh;
+      width: 240px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background-color: rgba(0, 0, 0, 0.8);
+      padding-top: 60px;
+    }
+
+    .sidebar a {
+      padding: 12px;
+      text-decoration: none;
+      font-size: 18px;
+      color: #f1f1f1;
+      display: block;
+    }
+
+    .sidebar a:hover {
+      background-color: #575757;
+    }
+
+    .content {
+      margin-left: 260px;
+      padding: 20px;
+      background-color: rgba(255, 255, 255, 0.95);
+      min-height: 100vh;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navigation Bar -->
+<nav class="navbar navbar-dark bg-dark fixed-top">
+  <div class="container-fluid">
+    <span class="navbar-brand mb-0 h1">Children Transportation System</span>
+  </div>
+</nav>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <a href="passenger.html">Passengers</a>
+  <a href="vehicle.html">Vehicles</a>
+  <a href="route.html">Route Details</a>
+  <a href="payment.html" class="active">Payments</a>
+  <a href="mechanic.html">Mechanics</a>
+</div>
+
+<!-- Content -->
+<div class="content">
+  <div class="container">
+    <br>
+    <br>
+    <br>
+    <h2 class="mb-4">Payment Management</h2>
+
+    <!-- Form -->
+    <form id="payment-form" class="row g-3">
+      <input type="hidden" id="paymentId">
+      <div class="col-md-4">
+        <input type="number" class="form-control" id="amount" placeholder="Amount" required>
+      </div>
+      <div class="col-md-4">
+        <input type="date" class="form-control" id="paymentDate" required>
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" id="paymentMethod" placeholder="Method (e.g. Cash, Card)" required>
+      </div>
+      <div class="col-md-4">
+        <input type="text" class="form-control" id="status" placeholder="Status (Paid, Pending)" required>
+      </div>
+      <div class="col-md-4">
+        <input type="number" class="form-control" id="passengerId" placeholder="Passenger ID" required>
+      </div>
+      <div class="col-md-4 d-grid gap-2">
+        <button type="button" class="btn btn-primary" onclick="createPayment()">Save</button>
+        <button type="button" class="btn btn-success" onclick="updatePayment()">Update</button>
+      </div>
+    </form>
+
+    <!-- Table -->
+    <table class="table table-bordered table-striped mt-4">
+      <thead class="table-dark">
+      <tr>
+        <th>ID</th>
+        <th>Amount</th>
+        <th>Date</th>
+        <th>Method</th>
+        <th>Status</th>
+        <th>Passenger</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody id="payment-table-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+  const apiUrl = "http://localhost:8080/api/v1/payments";
+
+  async function fetchPayments() {
+    const res = await fetch(`${apiUrl}/getAll`);
+    const data = await res.json();
+    const tbody = document.getElementById("payment-table-body");
+    tbody.innerHTML = "";
+
+    data.forEach(payment => {
+      tbody.innerHTML += `
+                <tr>
+                    <td>${payment.id}</td>
+                    <td>${payment.amount}</td>
+                    <td>${payment.paymentDate}</td>
+                    <td>${payment.paymentMethod}</td>
+                    <td>${payment.status}</td>
+                    <td>${payment.passengerId}</td>
+                    <td>
+                        <button class="btn btn-sm btn-warning" onclick="editPayment(${payment.id})">Edit</button>
+                        <button class="btn btn-sm btn-danger" onclick="deletePayment(${payment.id})">Delete</button>
+                    </td>
+                </tr>`;
+    });
+  }
+
+  async function createPayment() {
+    const payment = {
+      amount: document.getElementById("amount").value,
+      paymentDate: document.getElementById("paymentDate").value,
+      paymentMethod: document.getElementById("paymentMethod").value,
+      status: document.getElementById("status").value,
+      passengerId: document.getElementById("passengerId").value
+    };
+
+    await fetch(`${apiUrl}/save`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payment)
+    });
+
+    document.getElementById("payment-form").reset();
+    fetchPayments();
+  }
+
+  async function editPayment(id) {
+    const res = await fetch(`${apiUrl}/search/${id}`);
+    const payment = await res.json();
+
+    document.getElementById("paymentId").value = payment.id;
+    document.getElementById("amount").value = payment.amount;
+    document.getElementById("paymentDate").value = payment.paymentDate;
+    document.getElementById("paymentMethod").value = payment.paymentMethod;
+    document.getElementById("status").value = payment.status;
+    document.getElementById("passengerId").value = payment.passengerId;
+  }
+
+  async function updatePayment() {
+    const id = document.getElementById("paymentId").value;
+    const payment = {
+      amount: document.getElementById("amount").value,
+      paymentDate: document.getElementById("paymentDate").value,
+      paymentMethod: document.getElementById("paymentMethod").value,
+      status: document.getElementById("status").value,
+      passengerId: document.getElementById("passengerId").value
+    };
+
+    await fetch(`${apiUrl}/update/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payment)
+    });
+
+    document.getElementById("payment-form").reset();
+    fetchPayments();
+  }
+
+  async function deletePayment(id) {
+    await fetch(`${apiUrl}/delete/${id}`, { method: "DELETE" });
+    fetchPayments();
+  }
+
+  window.onload = fetchPayments;
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
