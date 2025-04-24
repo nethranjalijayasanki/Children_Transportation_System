@@ -57,13 +57,9 @@ mvn spring-boot:run
 
 ### 2. YouTube video:
 
-```bash
-
----
-
 https://youtu.be/DtU0kn999UU?feature=shared
----
-```
+
+
 
 ## 3. Frontend 🌟:
 The frontend files are located in the src/main/resources/static directory. You can open the HTML files directly in your browser or deploy them using a web server. 🌍
