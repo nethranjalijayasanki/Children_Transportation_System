@@ -2,15 +2,28 @@ package com.example.userbe.dto;
 
 import lombok.*;
 
-@Getter
-@Setter
+import java.time.LocalDate;
+
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
 public class DriverDTO {
-    private String name;
+    private Long id;
+    private String firstName;
+    private String lastName;
     private String licenseNumber;
+    private LocalDate licenseExpiryDate;
     private String contactNumber;
+    private String email;
+    private String address;
+    private String status;
+
+    public String getLicenseNumber() {
+        return licenseNumber;
+    }
+    public void setLicenseNumber(String licenseNumber) {
+        this.licenseNumber = licenseNumber;
+    }
 
 
 }

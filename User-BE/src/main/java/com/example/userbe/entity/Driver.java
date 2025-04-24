@@ -3,6 +3,8 @@ package com.example.userbe.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -14,17 +16,14 @@ public class Driver {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "driver_id", unique = true)
-    private String driverId;
-
-    @Column(nullable = false)
-    private String name;
-
-    @Column(name = "license_number", nullable = false, unique = true)
+    private String firstName;
+    private String lastName;
     private String licenseNumber;
-
-    @Column(name = "contact_number", nullable = false)
+    private LocalDate licenseExpiryDate;
     private String contactNumber;
+    private String email;
+    private String address;
+    private String status;
 
 
 

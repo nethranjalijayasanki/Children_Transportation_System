@@ -1,104 +1,97 @@
 package com.example.userbe.service.impl;
 
 import com.example.userbe.dto.DriverDTO;
-        import com.example.userbe.entity.Driver;
-        import com.example.userbe.repo.DriverRepository;
-        import com.example.userbe.service.DriverService;
-        import org.springframework.beans.factory.annotation.Autowired;
-        import org.springframework.stereotype.Service;
+import com.example.userbe.entity.Driver;
+import com.example.userbe.repo.DriverRepository;
+import com.example.userbe.service.DriverService;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-        import java.util.List;
-        import java.util.Optional;
-        import java.util.stream.Collectors;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class DriverServiceImpl implements DriverService {
-
     private final DriverRepository driverRepository;
+    private final ModelMapper modelMapper;
 
     @Autowired
-    public DriverServiceImpl(DriverRepository driverRepository) {
+    public DriverServiceImpl(DriverRepository driverRepository, ModelMapper modelMapper) {
         this.driverRepository = driverRepository;
-    }
-
-    @Override
-    public List<DriverDTO> getAllDrivers() {
-        return driverRepository.findAll().stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public DriverDTO getDriverById(String driverId) {
-        Optional<Driver> driver = driverRepository.findByDriverId(driverId);
-        return driver.map(this::convertToDTO).orElse(null);
+        this.modelMapper = modelMapper;
     }
 
     @Override
     public DriverDTO createDriver(DriverDTO driverDTO) {
         // Check if license number already exists
         if (driverRepository.existsByLicenseNumber(driverDTO.getLicenseNumber())) {
-            throw new RuntimeException("Driver with this license number already exists");
+            throw new RuntimeException("Driver with license number " + driverDTO.getLicenseNumber() + " already exists");
         }
 
-        // Generate driver ID
-        String driverId = generateDriverId();
+        // Check if email already exists
+        if (driverRepository.existsByLicenseNumber(driverDTO.getLicenseNumber())) {
+            throw new RuntimeException("Driver with email " + driverDTO.getLicenseNumber() + " already exists");
+        }
 
-        Driver driver = new Driver();
-        driver.setDriverId(driverId);
-        driver.setName(driverDTO.getName());
-        driver.setLicenseNumber(driverDTO.getLicenseNumber());
-        driver.setContactNumber(driverDTO.getContactNumber());
-
+        Driver driver = modelMapper.map(driverDTO, Driver.class);
         Driver savedDriver = driverRepository.save(driver);
-        return convertToDTO(savedDriver);
+        return modelMapper.map(savedDriver, DriverDTO.class);
     }
 
     @Override
-    public DriverDTO updateDriver(String driverId, DriverDTO driverDTO) {
-        Optional<Driver> optionalDriver = driverRepository.findByDriverId(driverId);
-        if (optionalDriver.isEmpty()) {
-            throw new RuntimeException("Driver not found with ID: " + driverId);
-        }
+    public DriverDTO getDriverById(Long id) {
+        Driver driver = driverRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Driver not found with id: " + id));
+        return modelMapper.map(driver, DriverDTO.class);
+    }
 
-        Driver existingDriver = optionalDriver.get();
+    @Override
+    public List<DriverDTO> getAllDrivers() {
+        List<Driver> drivers = driverRepository.findAll();
+        return drivers.stream()
+                .map(driver -> modelMapper.map(driver, DriverDTO.class))
+                .collect(Collectors.toList());
+    }
 
-        // Check if the new license number is already used by another driver
-        if (!existingDriver.getLicenseNumber().equals(driverDTO.getLicenseNumber())){
-            if (driverRepository.existsByLicenseNumber(driverDTO.getLicenseNumber())) {
-                throw new RuntimeException("Another driver already has this license number");
-            }
-        }
+    @Override
+    public DriverDTO updateDriver(Long id, DriverDTO driverDTO) {
+        Driver existingDriver = driverRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Driver not found with id: " + id));
 
-        existingDriver.setName(driverDTO.getName());
-        existingDriver.setLicenseNumber(driverDTO.getLicenseNumber());
-        existingDriver.setContactNumber(driverDTO.getContactNumber());
+        // Check if license number is being changed to one that already exists
+//        if (!existingDriver.getLicenseNumber().equals(driverDTO.getLicenseNumber()) &&
+//                driverRepository.existsByLicenseNumber(driverDTO.getLicenseNumber())) {
+//            throw new RuntimeException("Driver with license number " + driverDTO.getLicenseNumber() + " already exists");
+//        }
+//
+////        // Check if email is being changed to one that already exists
+//        if (!existingDriver.getLicenseNumber().equals(driverDTO.getLicenseNumber()) &&
+//                driverRepository.existsByLicenseNumber(driverDTO.getLicenseNumber())) {
+//            throw new RuntimeException("Driver with LicenseNumber " + driverDTO.getLicenseNumber() + " already exists");
+//        }
 
+        modelMapper.map(driverDTO, existingDriver);
         Driver updatedDriver = driverRepository.save(existingDriver);
-        return convertToDTO(updatedDriver);
+        return modelMapper.map(updatedDriver, DriverDTO.class);
     }
 
     @Override
-    public void deleteDriver(String driverId) {
-        Optional<Driver> driver = driverRepository.findByDriverId(driverId);
-        if (driver.isPresent()) {
-            driverRepository.delete(driver.get());
-        } else {
-            throw new RuntimeException("Driver not found with ID: " + driverId);
-        }
+    public void deleteDriver(Long id) {
+        Driver driver = driverRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Driver not found with id: " + id));
+        driverRepository.delete(driver);
     }
 
     @Override
-    public String generateDriverId() {
-        long count = driverRepository.count() + 1;
-        return "D" + String.format("%03d", count);
+    public boolean existsByLicenseNumber(String licenseNumber) {
+        return driverRepository.existsByLicenseNumber(licenseNumber);
     }
 
-    private DriverDTO convertToDTO(Driver driver) {
-        return new DriverDTO(
-                driver.getName(),
-                driver.getLicenseNumber(),
-                driver.getContactNumber()
-        );
+    @Override
+    public boolean existsByEmail(String email) {
+        return driverRepository.existsByEmail(email);
     }
 }
