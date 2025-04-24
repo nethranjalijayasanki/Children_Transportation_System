@@ -27,4 +27,12 @@ public class Payment {
     @ManyToOne
     @JoinColumn(name = "passenger_id")
     private Passenger passenger;
+
+    public Passenger getPassenger() {
+        return passenger;
+    }
+
+    public void setPassenger(Passenger passenger) {
+        this.passenger = passenger;
+    }
 }
