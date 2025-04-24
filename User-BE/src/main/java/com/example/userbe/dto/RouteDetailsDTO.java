@@ -5,11 +5,9 @@ import lombok.*;
 import java.time.LocalTime;
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
 
 public class RouteDetailsDTO {
     private Long id;
@@ -20,4 +18,20 @@ public class RouteDetailsDTO {
     private LocalTime endTime;
     private Long vehicleId;
     private List<Long> passengerIds;
+
+    public Long getVehicleId() {
+        return vehicleId;
+    }
+
+    public void setVehicleId(Long vehicleId) {
+        this.vehicleId = vehicleId;
+    }
+
+    public List<Long> getPassengerIds() {
+        return passengerIds;
+    }
+
+    public void setPassengerIds(List<Long> passengerIds) {
+        this.passengerIds = passengerIds;
+    }
 }
